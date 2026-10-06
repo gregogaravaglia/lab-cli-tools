@@ -2,6 +2,7 @@
 Each of the functions in this file takes a single line of input and transforms the line in some way.
 '''
 
+
 def compile_headers(line):
     '''
     Convert markdown headers into <h1>,<h2>,etc tags.
@@ -26,7 +27,20 @@ def compile_headers(line):
     >>> compile_headers('      # this is not a header')
     '      # this is not a header'
     '''
-    return line
+    if line[:7] == '###### ':
+        return '<h6> ' + line[7:] + '</h6>'
+    elif line[:6] == '##### ':
+        return '<h5> ' + line[6:] + '</h5>'
+    elif line[:5] == '#### ':
+        return '<h4> ' + line[5:] + '</h4>'
+    elif line[:4] == '### ':
+        return '<h3> ' + line[4:] + '</h3>'
+    elif line[:3] == '## ':
+        return '<h2> ' + line[3:] + '</h2>'
+    elif line[:2] == '# ':
+        return '<h1> ' + line[2:] + '</h1>'
+    else:
+        return line
 
 
 def compile_italic_star(line):
@@ -50,7 +64,17 @@ def compile_italic_star(line):
     >>> compile_italic_star('*')
     '*'
     '''
-    return line
+    start = line.find('*')
+
+    if start == -1:
+        return line
+
+    end = line.find('*', start + 1)
+
+    if end == -1:
+        return line
+
+    return line[:start] + '<i>' + line[start + 1:end] + '</i>' + line[end + 1:]
 
 
 def compile_italic_underscore(line):
@@ -71,7 +95,17 @@ def compile_italic_underscore(line):
     >>> compile_italic_underscore('_')
     '_'
     '''
-    return line
+    start = line.find('_')
+
+    if start == -1:
+        return line
+
+    end = line.find('_', start + 1)
+
+    if end == -1:
+        return line
+
+    return line[:start] + '<i>' + line[start + 1:end] + '</i>' + line[end + 1:]
 
 
 def compile_strikethrough(line):
@@ -94,7 +128,17 @@ def compile_strikethrough(line):
     >>> compile_strikethrough('~~')
     '~~'
     '''
-    return line
+    start = line.find('~~')
+
+    if start == -1:
+        return line
+
+    end = line.find('~~', start + 2)
+
+    if end == -1:
+        return line
+
+    return line[:start] + '<ins>' + line[start + 2:end] + '</ins>' + line[end + 2:]
 
 
 def compile_bold_stars(line):
@@ -115,7 +159,17 @@ def compile_bold_stars(line):
     >>> compile_bold_stars('**')
     '**'
     '''
-    return line
+    start = line.find('**')
+
+    if start == -1:
+        return line
+
+    end = line.find('**', start + 2)
+
+    if end == -1:
+        return line
+
+    return line[:start] + '<b>' + line[start + 2:end] + '</b>' + line[end + 2:]
 
 
 def compile_bold_underscore(line):
@@ -136,7 +190,17 @@ def compile_bold_underscore(line):
     >>> compile_bold_underscore('__')
     '__'
     '''
-    return line
+    start = line.find('__')
+
+    if start == -1:
+        return line
+
+    end = line.find('__', start + 2)
+
+    if end == -1:
+        return line
+
+    return line[:start] + '<b>' + line[start + 2:end] + '</b>' + line[end + 2:]
 
 
 def compile_code_inline(line):
@@ -166,7 +230,24 @@ def compile_code_inline(line):
     >>> compile_code_inline('```python3')
     '```python3'
     '''
-    return line
+    start = line.find('`')
+
+    if start == -1:
+        return line
+
+    if line[:3] == '```':
+        return line
+
+    end = line.find('`', start + 1)
+
+    if end == -1:
+        return line
+
+    code = line[start + 1:end]
+    code = code.replace('<', '&lt;')
+    code = code.replace('>', '&gt;')
+
+    return line[:start] + '<code>' + code + '</code>' + line[end + 1:]
 
 
 def compile_links(line):
@@ -186,7 +267,25 @@ def compile_links(line):
     >>> compile_links('this is wrong: [course webpage](https://github.com/mikeizbicki/cmc-csci040')
     'this is wrong: [course webpage](https://github.com/mikeizbicki/cmc-csci040'
     '''
-    return line
+    start = line.find('[')
+
+    if start == -1:
+        return line
+
+    end_text = line.find('](', start + 1)
+
+    if end_text == -1:
+        return line
+
+    end_url = line.find(')', end_text + 2)
+
+    if end_url == -1:
+        return line
+
+    text = line[start + 1:end_text]
+    url = line[end_text + 2:end_url]
+
+    return line[:start] + '<a href="' + url + '">' + text + '</a>' + line[end_url + 1:]
 
 
 def compile_images(line):
@@ -205,4 +304,22 @@ def compile_images(line):
     >>> compile_images('This is an image of Mike Izbicki: ![Mike Izbicki](https://avatars1.githubusercontent.com/u/1052630?v=2&s=460)')
     'This is an image of Mike Izbicki: <img src="https://avatars1.githubusercontent.com/u/1052630?v=2&s=460" alt="Mike Izbicki" />'
     '''
-    return line
+    start = line.find('![')
+
+    if start == -1:
+        return line
+
+    end_text = line.find('](', start + 2)
+
+    if end_text == -1:
+        return line
+
+    end_url = line.find(')', end_text + 2)
+
+    if end_url == -1:
+        return line
+
+    alt = line[start + 2:end_text]
+    url = line[end_text + 2:end_url]
+
+    return line[:start] + '<img src="' + url + '" alt="' + alt + '" />' + line[end_url + 1:]
