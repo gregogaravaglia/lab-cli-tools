@@ -1,4 +1,5 @@
-# markdown-compiler
+# lab-cli-tools
 
-Starter code for [Project 1: Markdown Compiler](https://csci40.rtealwitter.com/projects/01_markdown_compiler/project.html) in CSCI 40.
-The compiler is also used in optional tasks for [Project 4: AI Coding Agent](https://csci40.rtealwitter.com/projects/04_agents/project.html) and the [Twitter Clone final project](https://csci40.rtealwitter.com/projects/05_twitter_clone/project.html).
+Starter files for the [weekly lab](https://csci40.rtealwitter.com/topics/04_exceptions/lab.html).
+
+Adapted from Mike Izbicki’s [Cowsay](https://github.com/mikeizbicki/lab-cowsay) and [password-cracking](https://github.com/mikeizbicki/lab-password-cracking) labs.
